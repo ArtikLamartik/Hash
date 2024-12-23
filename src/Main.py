@@ -6,84 +6,41 @@ import os
 
 try:
 
-    # it exits the program
-    EXIT = "exit"
-    # it is used to comment a line
-    COMMENT = "//"
-    # it is used to pass a line
-    PASS = "pass"
-    # it is used to set a variable
-    SET = "set"
-    # it is used to output
-    OUT = "out"
-    # it is used to input
-    INP = "inp"
-    # it is used to import a module
-    IMP = "#imp"
-    # it is used to make a string lowercase
-    LOWER = "lower"
-    # it is used to make a string uppercase
-    UPPER = "upper"
-    # it is used to make a string capitalize (first-uppercase)
-    FUPPER = "fupper"
-    # it is used to make a string capitalize, but at the end (last-uppercase)
-    LUPPER = "lupper"
-    # it is used to make a string uncapitalize (first-lowercase), will make the first letter lowercase
-    FLOWER = "flower"
-    # it is used to make a string uncapitalize (last-lowercase), will make the last letter lowercase
-    LLOWER = "llower"
-    # it is used to reverse a string
-    REVERSE = "reverse"
-    # it is used to add
-    ADD = "add"
-    # it is used to subtract
-    SUB = "sub"
-    # it is used to multiply
-    MUL = "mul"
-    # it is used to divide
-    DIV = "div"
-    # it is used to read a file
-    READ = "read"
-    # it is used to write to a file
-    WRITE = "write"
-    # it is used to append to a file
-    APPEND = "append"
-    # it is used to delete a file
-    DELF = "delf"
-    # it is used to make a function
-    FUNC = "func"
-    # it is used to call a function
-    CALL = "call"
-    # it is used to make a variable absolute
-    ABS = "abs"
-    # it is used to round a float
-    ROUND = "round"
-    # it is used to get a random number beetwen two numbers
-    RANDOM = "random"
-    # it is used to loop
-    LOOP = "loop"
-    # it is used to check if something is TRUE
-    IF = "if"
-    # it is used to wait for a specific time (in seconds)
-    WAIT = "wait"
-    # it is used to make a variable a string
-    STR = "str"
-    # it is used to make a variable a intiger
-    INT = "int"
-    # it is used to make a variable a float
-    FLT = "flt"
-    # it is used to make a variable a boolean
-    BOL = "bol"
-    # it is used to get the arguments from running the code
-    ARG = "arg"
-    # it is used to check if a variable is an string
-    ISSTR = "isstr"
-    # it is used to check if a variable is an integer
-    ISINT = "isint"
-    # it is used to check if a variable is an float
-    ISFLT = "isflt"
-    # it is used to check if a variable is an boolean
-    ISBOL = "isbol"
+    EXIT    =  "exit"         # it is used to exit the program
+    COMMENT =  "//"           # it is used to comment a line
+    PASS    =  "pass"         # it is used to pass a line
+    SET     =  "set"          # it is used to set a variable
+    OUT     =  "out"          # it is used to output
+    INP     =  "inp"          # it is used to input
+    IMP     =  "#imp"         # it is used to import a module
+    LOWER   =  "lower"        # it is used to make a string lowercase
+    UPPER   =  "upper"        # it is used to make a string uppercase
+    FUPPER  =  "fupper"       # it is used to make a string capitalize (first-uppercase)
+    LUPPER  =  "lupper"       # it is used to make a string capitalize, but at the end (last-uppercase)
+    FLOWER  =  "flower"       # it is used to make a string uncapitalize (first-lowercase), will make the first letter lowercase
+    LLOWER  =  "llower"       # it is used to make a string uncapitalize (last-lowercase), will make the last letter lowercase
+    REVERSE =  "reverse"      # it is used to reverse a string
+    ADD     =  "add"          # it is used to add
+    SUB     =  "sub"          # it is used to subtract
+    MUL     =  "mul"          # it is used to multiply
+    DIV     =  "div"          # it is used to divide
+    FUNC    =  "func"         # it is used to make a function
+    CALL    =  "call"         # it is used to call a function
+    ABS     =  "abs"          # it is used to make a variable absolute
+    ROUND   =  "round"        # it is used to round a float
+    RANDOM  =  "random"       # it is used to get a random number beetwen two numbers
+    LOOP    =  "loop"         # it is used to loop
+    IF      =  "if"           # it is used to check if something is TRUE
+    WAIT    =  "wait"         # it is used to wait for a specific time (in seconds)
+    STR     =  "str"          # it is used to make a variable a string
+    INT     =  "int"          # it is used to make a variable a intiger
+    FLT     =  "flt"          # it is used to make a variable a float
+    BOL     =  "bol"          # it is used to make a variable a boolean
+    ARG     =  "arg"          # it is used to get the arguments from running the code
+    ISSTR   =  "isstr"        # it is used to check if a variable is an string
+    ISINT   =  "isint"        # it is used to check if a variable is an integer
+    ISFLT   =  "isflt"        # it is used to check if a variable is an float
+    ISBOL   =  "isbol"        # it is used to check if a variable is an boolean
 
     try:
         if sys.argv[1].endswith(".hash"):
@@ -363,10 +320,10 @@ try:
             val1 = interpret_vars(alltokens[i + 3])
             val2 = interpret_vars(alltokens[i + 4])
             try:
-                if int(val1) % int(val2) == 0:
-                    variables[var_name] = int(int(val1) / int(val2))
+                if float(val1) % float(val2) == 0:
+                    variables[var_name] = int(float(val1) / float(val2))
                 else:
-                    variables[var_name] = int(val1) / int(val2)
+                    variables[var_name] = float(val1) / float(val2)
             except ValueError:
                 for index, line in enumerate(allcode):
                     if line.startswith(alltokens[i]):
@@ -464,25 +421,25 @@ try:
         elif token.lower() == INP:
             user_input = input(">> ")
             if alltokens[i + 1] == "str":
-                variables[alltokens[i + 2]] = str(user_input)
+                variables[remove_brackets(alltokens[i + 2])] = str(user_input)
             elif alltokens[i + 1] == "int":
                 try:
-                    variables[alltokens[i + 2]] = int(user_input)
+                    variables[remove_brackets(alltokens[i + 2])] = int(user_input)
                 except ValueError:
                     print("Error: Invalid input. Expected an integer.")
                     exit(1)
             elif alltokens[i + 1] == "flt":
                 try:
                     user_input = user_input.replace(",", ".")
-                    variables[alltokens[i + 2]] = float(user_input)
+                    variables[remove_brackets(alltokens[i + 2])] = float(user_input)
                 except ValueError:
                     print("Error: Invalid input. Expected a float.")
                     exit(1)
             elif alltokens[i + 1] == "bol":
                 if user_input.strip() == "TRUE":
-                    variables[alltokens[i + 2]] = "TRUE"
+                    variables[remove_brackets(alltokens[i + 2])] = "TRUE"
                 elif user_input.strip() == "FALSE":
-                    variables[alltokens[i + 2]] = "FALSE"
+                    variables[remove_brackets(alltokens[i + 2])] = "FALSE"
                 else:
                     print("Error: Invalid input. Expected a boolean.")
                     exit(1)
