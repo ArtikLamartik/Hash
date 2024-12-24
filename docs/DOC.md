@@ -1,9 +1,9 @@
 # Command Definitions for the Custom Language
 
 # System Commands
-EXIT    = "exit"      // Exit the program
-COMMENT = "//"        // Comment a line
-PASS    = "pass"      // Pass a line
+# EXIT    = "exit"      // Exit the program
+# COMMENT = "//"        // Comment a line
+# PASS    = "pass"      // Pass a line
 
 # Examples
 # EXIT
@@ -11,14 +11,14 @@ PASS    = "pass"      // Pass a line
 # PASS
 
 # Variable Handling
-SET     = "set"       // Set a variable
+# SET     = "set"       // Set a variable
 
 # Examples
 # SET [x] = 10
 
 # Input and Output
-OUT     = "out"       // Output a value
-INP     = "inp"       // Input a value
+# OUT     = "out"       // Output a value
+# INP     = "inp"       // Input a value
 
 # Examples
 # SET [y] = 4
