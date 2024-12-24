@@ -136,6 +136,15 @@ try:
                     file_name = alltokens[i + 2]
                     os.remove(file_name)
                     i += 2
+                elif alltokens[i + 1].lower() == "arg":
+                    var_name = alltokens[i + 2]
+                    arg_num = alltokens[i + 3]
+                    var = remove_brackets(var_name)
+                    try:
+                        variables[var] = sys.argv[int(arg_num) + 1]
+                    except:
+                        pass
+                    i += 3
             else:
                 print("System module not imported")
                 exit(1)
@@ -246,15 +255,6 @@ try:
             except:
                 pass
             i += 1
-        elif token.lower() == ARG:
-            var_name = alltokens[i + 1]
-            arg_num = alltokens[i + 2]
-            var = remove_brackets(var_name)
-            try:
-                variables[var] = sys.argv[int(arg_num) + 1]
-            except:
-                pass
-            i += 2
         elif token.lower() == ADD:
             var_name = alltokens[i + 1]
             if alltokens[i + 2] != "=":
