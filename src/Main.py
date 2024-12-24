@@ -6,41 +6,42 @@ import os
 
 try:
 
-    EXIT    =  "exit"         # it is used to exit the program
-    COMMENT =  "//"           # it is used to comment a line
-    PASS    =  "pass"         # it is used to pass a line
-    SET     =  "set"          # it is used to set a variable
-    OUT     =  "out"          # it is used to output
-    INP     =  "inp"          # it is used to input
-    IMP     =  "#imp"         # it is used to import a module
-    LOWER   =  "lower"        # it is used to make a string lowercase
-    UPPER   =  "upper"        # it is used to make a string uppercase
-    FUPPER  =  "fupper"       # it is used to make a string capitalize (first-uppercase)
-    LUPPER  =  "lupper"       # it is used to make a string capitalize, but at the end (last-uppercase)
-    FLOWER  =  "flower"       # it is used to make a string uncapitalize (first-lowercase), will make the first letter lowercase
-    LLOWER  =  "llower"       # it is used to make a string uncapitalize (last-lowercase), will make the last letter lowercase
-    REVERSE =  "reverse"      # it is used to reverse a string
-    ADD     =  "add"          # it is used to add
-    SUB     =  "sub"          # it is used to subtract
-    MUL     =  "mul"          # it is used to multiply
-    DIV     =  "div"          # it is used to divide
-    FUNC    =  "func"         # it is used to make a function
-    CALL    =  "call"         # it is used to call a function
-    ABS     =  "abs"          # it is used to make a variable absolute
-    ROUND   =  "round"        # it is used to round a float
-    RANDOM  =  "random"       # it is used to get a random number beetwen two numbers
-    LOOP    =  "loop"         # it is used to loop
-    IF      =  "if"           # it is used to check if something is TRUE
-    WAIT    =  "wait"         # it is used to wait for a specific time (in seconds)
-    STR     =  "str"          # it is used to make a variable a string
-    INT     =  "int"          # it is used to make a variable a intiger
-    FLT     =  "flt"          # it is used to make a variable a float
-    BOL     =  "bol"          # it is used to make a variable a boolean
-    ARG     =  "arg"          # it is used to get the arguments from running the code
-    ISSTR   =  "isstr"        # it is used to check if a variable is an string
-    ISINT   =  "isint"        # it is used to check if a variable is an integer
-    ISFLT   =  "isflt"        # it is used to check if a variable is an float
-    ISBOL   =  "isbol"        # it is used to check if a variable is an boolean
+    EXIT        =  "exit"            # it is used to exit the program
+    COMMENT     =  "//"              # it is used to comment a line
+    PASS        =  "pass"            # it is used to pass a line
+    IMP         =  "#imp"            # it is used to import a module
+    INCLUDEVOID =  "#includevoid"    # it is used to include a any function from the file
+    SET         =  "set"             # it is used to set a variable
+    OUT         =  "out"             # it is used to output
+    INP         =  "inp"             # it is used to input
+    LOWER       =  "lower"           # it is used to make a string lowercase
+    UPPER       =  "upper"           # it is used to make a string uppercase
+    FUPPER      =  "fupper"          # it is used to make a string capitalize (first-uppercase)
+    LUPPER      =  "lupper"          # it is used to make a string capitalize, but at the end (last-uppercase)
+    FLOWER      =  "flower"          # it is used to make a string uncapitalize (first-lowercase), will make the first letter lowercase
+    LLOWER      =  "llower"          # it is used to make a string uncapitalize (last-lowercase), will make the last letter lowercase
+    REVERSE     =  "reverse"         # it is used to reverse a string
+    ADD         =  "add"             # it is used to add
+    SUB         =  "sub"             # it is used to subtract
+    MUL         =  "mul"             # it is used to multiply
+    DIV         =  "div"             # it is used to divide
+    FUNC        =  "func"            # it is used to make a function
+    CALL        =  "call"            # it is used to call a function
+    ABS         =  "abs"             # it is used to make a variable absolute
+    ROUND       =  "round"           # it is used to round a float
+    RANDOM      =  "random"          # it is used to get a random number beetwen two numbers
+    LOOP        =  "loop"            # it is used to loop
+    IF          =  "if"              # it is used to check if something is TRUE
+    WAIT        =  "wait"            # it is used to wait for a specific time (in seconds)
+    STR         =  "str"             # it is used to make a variable a string
+    INT         =  "int"             # it is used to make a variable a intiger
+    FLT         =  "flt"             # it is used to make a variable a float
+    BOL         =  "bol"             # it is used to make a variable a boolean
+    ARG         =  "arg"             # it is used to get the arguments from running the code
+    ISSTR       =  "isstr"           # it is used to check if a variable is an string
+    ISINT       =  "isint"           # it is used to check if a variable is an integer
+    ISFLT       =  "isflt"           # it is used to check if a variable is an float
+    ISBOL       =  "isbol"           # it is used to check if a variable is an boolean
 
     try:
         if sys.argv[1].endswith(".hash"):
@@ -148,6 +149,26 @@ try:
             else:
                 print("System module not imported")
                 exit(1)
+        elif token.lower() == INCLUDEVOID:
+            try:
+                with open(alltokens[i + 1], "r") as hashfile:
+                    file_code = hashfile.read()
+                    file_code = shlex.split(file_code)
+                    while True:
+                        try:
+                            start_index = file_code.index("func")
+                            end_index = file_code.index("}")
+                            func_code = file_code[start_index:end_index]
+                            alltokens[i+1:i+1] = func_code
+                            alltokens.insert(i+1, "{")
+                            alltokens.insert(i+2+len(func_code), "}")
+                            file_code = file_code[end_index+1:]
+                        except ValueError:
+                            break
+            except FileNotFoundError:
+                print("File not found")
+                exit(1)
+            i += 1
         elif token.lower() == PASS:
             pass
         elif token.lower() == SET:
@@ -160,7 +181,7 @@ try:
             output = interpret_vars(alltokens[i + 1])
             print(
                 output,
-                end=alltokens[i + 2].replace("\\n", "\n").replace("/n", "\n"),
+                end=interpret_vars(alltokens[i + 2]).replace("\\n", "\n").replace("/n", "\n"),
                 flush=True,
             )
             i += 2
