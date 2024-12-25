@@ -1,0 +1,3 @@
+func prnt ( input ending ) {
+    out [input] [ending]
+}
