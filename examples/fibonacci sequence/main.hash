@@ -1,0 +1,16 @@
+set [num1] = 0
+set [num2] = 1
+set [next_number] = [num2]
+
+out [num1] " "
+wait 1
+out [num2] " "
+wait 1
+
+loop TRUE {
+    out [next_number] " "
+    set [num1] = [num2]
+    set [num2] = [next_number]
+    add [next_number] = [num1] [num2]
+    wait 1
+}
