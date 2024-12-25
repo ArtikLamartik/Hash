@@ -8,4 +8,4 @@ loop [n] {
     set [num2] = [next_number]
     add [next_number] = [num1] [num2]
 }
-out [next_number] " 
+out [next_number] " "
