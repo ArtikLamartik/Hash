@@ -1,2 +1,0 @@
-#includevoid std.hash
-call prnt ( "This message" "/n" )
