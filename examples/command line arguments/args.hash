@@ -1,0 +1,2 @@
+#imp system    // works with sys as well
+system arg the_first_arg_var 1 // the arg 1 is stored in the_first_arg_var
