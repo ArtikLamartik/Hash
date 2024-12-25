@@ -1,0 +1,20 @@
+set [n] = 10
+set [num1] = 0
+set [num2] = 1
+set [next_number] = [num2]
+
+out [num1] " "
+sub [n] = [n] 1
+if [n] >> 0 {
+    wait 1
+    out [num2] " "
+    sub [n] = [n] 1
+}
+
+loop [n] {
+    wait 1
+    out [next_number] " "
+    set [num1] = [num2]
+    set [num2] = [next_number]
+    add [next_number] = [num1] [num2]
+}
