@@ -3,9 +3,22 @@ set [num1] = 0
 set [num2] = 1
 set [next_number] = [num2]
 
+if [n] == 1 {
+    out [num1]
+} if [n] == 2 {
+    out [num2]
+}
+
+sub [n] = [n] 3
+
 loop [n] {
     set [num1] = [num2]
     set [num2] = [next_number]
     add [next_number] = [num1] [num2]
 }
-out [next_number] " "
+
+if [n] != -1 {
+    if [n] != 0 {
+        out [next_number] " "
+    }
+}
