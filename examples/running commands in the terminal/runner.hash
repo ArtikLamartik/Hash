@@ -1,2 +1,0 @@
-#imp system    // works with sys as well
-system run "echo lol"

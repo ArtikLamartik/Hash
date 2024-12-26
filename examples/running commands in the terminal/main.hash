@@ -1,0 +1,2 @@
+#use system    // works with sys as well
+system run "echo message"
