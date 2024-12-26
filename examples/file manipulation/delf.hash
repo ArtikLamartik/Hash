@@ -1,4 +1,4 @@
-#imp system    // works with sys as well
+#use system    // works with sys as well
 system delf "text.txt"
 
 // it deletes a file
