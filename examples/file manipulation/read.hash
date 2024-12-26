@@ -1,3 +1,4 @@
-#imp system    // works with sys as well
+#use system      // works with sys as well
 set content = ""
 system read [content] "text.txt"
+out [content]    // it outputs the var named "content"
