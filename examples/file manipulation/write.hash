@@ -1,3 +1,3 @@
 #use system    // works with sys as well
-set message = "This is a message as well."
+set message = "This is a message."
 system write [message] "text.txt"
