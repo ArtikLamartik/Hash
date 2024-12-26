@@ -9,7 +9,7 @@ try:
     EXIT        =  "exit"            # it is used to exit the program
     COMMENT     =  "//"              # it is used to comment a line
     PASS        =  "pass"            # it is used to pass a line
-    IMP         =  "#imp"            # it is used to import a module
+    USE         =  "#use"            # it is used to import a module
     INCLUDEVOID =  "#includevoid"    # it is used to include a any function from the file
     SET         =  "set"             # it is used to set a variable
     OUT         =  "out"             # it is used to output
@@ -78,8 +78,16 @@ try:
             placeholder = f"[{name}]"
             if placeholder in input_str:
                 input_str = input_str.replace(placeholder, str(value))
-        if input_str.startswith("[") and input_str.endswith("]"):
-            return None
+        if "[" in input_str:
+            for char in input_str:
+                if char == "[":
+                    start = input_str.index("[")
+                    end = input_str.index("]", start)
+                    var_name = input_str[start:end+1]
+                    if var_name in variables:
+                        input_str = input_str.replace(var_name, str(variables[var_name]))
+                    else:
+                        input_str = input_str.replace(var_name, "NONE")
         return input_str
 
     def remove_brackets(vars_name):
@@ -87,6 +95,18 @@ try:
 
     def isvar(var_name):
         return var_name.startswith("[") and var_name.endswith("]")
+    
+    def find_end_brace(start_index):
+        brace_count = 1
+        for ind in range(start_index + 1, len(alltokens)):
+            if alltokens[ind] == "{":
+                brace_count += 1
+            elif alltokens[ind] == "}":
+                brace_count -= 1
+                if brace_count == 0:
+                    return ind
+        print("Error: Missing closing brace")
+        exit(1)
 
     sys.set_int_max_str_digits(1000000000)
 
@@ -188,7 +208,7 @@ try:
         elif token.lower() == WAIT:
             time.sleep(float(interpret_vars(alltokens[i + 1])))
             i += 1
-        elif token.lower() == IMP:
+        elif token.lower() == USE:
             if alltokens[i + 1] in allowed_imports:
                 imports.append(alltokens[i + 1])
             else:
@@ -287,7 +307,11 @@ try:
             val1 = interpret_vars(alltokens[i + 3])
             val2 = interpret_vars(alltokens[i + 4])
             try:
-                variables[var_name] = int(val1) + int(val2)
+                result = float(val1) + float(val2)
+                if result.is_integer():
+                    variables[var_name] = int(result)
+                else:
+                    variables[var_name] = result
             except ValueError:
                 for index, line in enumerate(allcode):
                     if line.startswith(alltokens[i]):
@@ -305,7 +329,11 @@ try:
             val1 = interpret_vars(alltokens[i + 3])
             val2 = interpret_vars(alltokens[i + 4])
             try:
-                variables[var_name] = int(val1) - int(val2)
+                result = float(val1) - float(val2)
+                if result.is_integer():
+                    variables[var_name] = int(result)
+                else:
+                    variables[var_name] = result
             except ValueError:
                 for index, line in enumerate(allcode):
                     if line.startswith(alltokens[i]):
@@ -323,7 +351,11 @@ try:
             val1 = interpret_vars(alltokens[i + 3])
             val2 = interpret_vars(alltokens[i + 4])
             try:
-                variables[var_name] = float(val1) * float(val2)
+                result = float(val1) * float(val2)
+                if result.is_integer():
+                    variables[var_name] = int(result)
+                else:
+                    variables[var_name] = result
             except ValueError:
                 for index, line in enumerate(allcode):
                     if line.startswith(alltokens[i]):
@@ -341,10 +373,11 @@ try:
             val1 = interpret_vars(alltokens[i + 3])
             val2 = interpret_vars(alltokens[i + 4])
             try:
-                if float(val1) % float(val2) == 0:
-                    variables[var_name] = int(float(val1) / float(val2))
+                result = float(val1) / float(val2)
+                if result.is_integer():
+                    variables[var_name] = int(result)
                 else:
-                    variables[var_name] = float(val1) / float(val2)
+                    variables[var_name] = result
             except ValueError:
                 for index, line in enumerate(allcode):
                     if line.startswith(alltokens[i]):
@@ -654,20 +687,20 @@ try:
                 if oprr == "==":
                     if interpret_vars(op_1) == interpret_vars(op_2):
                         srt = i + 5
-                        ed = alltokens.index("}", srt) + 2
+                        ed = alltokens.index("}", srt)
                         i = srt
                     else:
-                        srt = i + 6
-                        ed = alltokens.index("}", srt) + 2
+                        srt = i + 5
+                        ed = find_end_brace(srt)
                         i = ed
                 elif oprr == "!=":
                     if interpret_vars(str(op_1)) != interpret_vars(str(op_2)):
                         srt = i + 5
-                        ed = alltokens.index("}", srt) + 2
+                        ed = alltokens.index("}", srt) + 1
                         i = srt
                     else:
                         srt = i + 6
-                        ed = alltokens.index("}", srt) + 2
+                        ed = alltokens.index("}", srt) + 1
                         i = ed
                 elif oprr == ">>":
                     if interpret_vars(str(op_1)) > interpret_vars(str(op_2)):
@@ -676,7 +709,7 @@ try:
                         i = srt
                     else:
                         srt = i + 6
-                        ed = alltokens.index("}", srt) + 2
+                        ed = alltokens.index("}", srt) + 1
                         i = ed
                 elif oprr == "<<":
                     if interpret_vars(str(op_1)) < interpret_vars(str(op_2)):
@@ -685,7 +718,7 @@ try:
                         i = srt
                     else:
                         srt = i + 6
-                        ed = alltokens.index("}", srt) + 2
+                        ed = alltokens.index("}", srt) + 1
                         i = ed
                 elif oprr == ">=":
                     if interpret_vars(str(op_1)) >= interpret_vars(str(op_2)):
@@ -694,7 +727,7 @@ try:
                         i = srt
                     else:
                         srt = i + 6
-                        ed = alltokens.index("}", srt) + 2
+                        ed = alltokens.index("}", srt) + 1
                         i = ed
                 elif oprr == "<=":
                     if interpret_vars(str(op_1)) <= interpret_vars(str(op_2)):
@@ -703,10 +736,13 @@ try:
                         i = srt
                     else:
                         srt = i + 6
-                        ed = alltokens.index("}", srt) + 2
+                        ed = alltokens.index("}", srt) + 1
                         i = ed
+                else:
+                    print("Invalid Operator")
+                    exit(1)
             except Exception as e:
-                print(f"How did i get an error here? {e}")
+                print("""Congratulations! You've officially hit rock bottom in programming. It's like you're trying to communicate with the computer using interpretive dance instead of code. You absolute soggy toaster strudel of a programmer, what cosmic joke allowed you to be in front of a computer? Every line of code you write probably sets the entire field of computer science back by decades. It's like watching a walrus try to do ballet painful, yet you can't look away. Honestly, you should consider a career in anything else. Origami, perhaps? At least when you fold paper, it's supposed to happen. Seriously, take up anything that's as far away from programming as humanly possible. It's for the greater good of the digital world.""")
                 exit(1)
         elif token.strip() != "" and token != "\n" and token != "}":
             for index, line in enumerate(allcode):
@@ -723,7 +759,7 @@ try:
                     if not isvar(param_name):
                         del variables[param_name]
                     else:
-                        variables[param_name] = None
+                        variables[param_name] = "NONE"
         except:
             pass
         try:
