@@ -1,3 +1,4 @@
+import binascii
 import random
 import shlex
 import time
@@ -45,9 +46,31 @@ try:
 
     try:
         if sys.argv[1].endswith(".hash"):
+            if sys.argv[2] == "-r":
+                filename = sys.argv[1]
+            elif sys.argv[2] == "-c":
+                filename = sys.argv[1]
+                with open(filename, "rb") as f:
+                    content = f.read()
+                hex_content = binascii.hexlify(content)
+                hex_with_random = bytearray()
+                try:
+                    for i in range(0, len(hex_content), 255):
+                        random_number = random.randint(0, 254)
+                        hex_with_random.append(random_number)
+                        hex_with_random.extend((int(hex_content[i:i+2], 16) + random_number) % 256 for i in range(0, len(hex_content), 2))
+                    output_filename = filename.rsplit('.', 1)[0] + ".hasm"
+                    with open(output_filename, "wb") as f:
+                        f.write(hex_with_random)
+                except:
+                    pass
+            else:
+                print("Invalid Flag")
+                exit(1)
+        elif sys.argv[1].endswith(".hasm"):
             filename = sys.argv[1]
         else:
-            print("Invalid File Name (it does not end with .hash)")
+            print("Invalid File Name (it does not end with .hash or .hasm)")
             exit(1)
     except:
         print("Invalid File Name (not provided)")
@@ -60,17 +83,35 @@ try:
     imports = []
 
     try:
-        with open(filename, "r") as hashfile:
-            allcode = hashfile.readlines()
-            for line in allcode:
-                if COMMENT in line:
-                    line = line[: line.index(COMMENT)]
-                tokens = shlex.split(line)
-                for token in tokens:
-                    alltokens.append(token)
-                alltokens.append("\n")
-    except:
-        print("File not found")
+        if filename.endswith(".hash") and sys.argv[2] != "-c":
+            with open(filename, "r") as hashfile:
+                allcode = hashfile.readlines()
+                for line in allcode:
+                    if COMMENT in line and line.index(COMMENT) > line.index("\\"):
+                        line = line[: line.index(COMMENT)]
+                    tokens = shlex.split(line)
+                    for token in tokens:
+                        alltokens.append(token)
+                    alltokens.append("\n")
+        if filename.endswith(".hasm") and sys.argv[2] == "-r":
+            with open(filename, "rb") as hasmfile:
+                hex_with_random = hasmfile.read()
+                random_number = hex_with_random[0]
+                hex_content = bytearray((byte - random_number) % 256 for byte in hex_with_random[1:])
+                decoded_content = hex_content.decode("utf-8")
+                allcode = decoded_content.splitlines()
+                for line in allcode:
+                    if COMMENT in line and line.index(COMMENT) > line.index("\\"):
+                        line = line[: line.index(COMMENT)]
+                    tokens = shlex.split(line)
+                    for token in tokens:
+                        alltokens.append(token)
+                    alltokens.append("\n")
+        elif not filename.endswith(".hash") and sys.argv[2] == "-c":
+            print("Invalid Flag")
+            exit(1)
+    except Exception as e:
+        print("File not found", e)
         exit(1)
 
     def interpret_vars(input_str):
@@ -162,7 +203,7 @@ try:
                     arg_num = alltokens[i + 3]
                     var = remove_brackets(var_name)
                     try:
-                        variables[var] = sys.argv[int(arg_num) + 1]
+                        variables[var] = sys.argv[int(arg_num) + 2]
                     except:
                         pass
                     i += 3
@@ -201,7 +242,7 @@ try:
             output = interpret_vars(alltokens[i + 1])
             print(
                 output,
-                end=interpret_vars(alltokens[i + 2]).replace("\\n", "\n").replace("/n", "\n"),
+                end=interpret_vars(alltokens[i + 2]).replace("/n", "\n"),
                 flush=True,
             )
             i += 2
